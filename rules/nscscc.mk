@@ -35,8 +35,11 @@ $$($(1)_LS_TOP_V): $$(LOONGSON_NPC_RTL)
 	mkdir -p $$(@D)
 	cp $$< $$@
 
-submit-$(1) $$($(1)_LS_XPR): $$($(1)_LS_TOP_V) $(2)
+$$($(1)_LS_XPR):
+	rm -rf $$(LS_SUBMIT_DIR)/soc_axi_$(1)
 	cp -r nscscc/soc_axi_$(1) $$(LS_SUBMIT_DIR)
+
+submit-$(1): $$($(1)_LS_XPR) $$($(1)_LS_TOP_V) $(2)
 
 clean-submit-$(1):
 	cd $$(LS_SUBMIT_DIR) && rm -rf soc_axi_$(1)
@@ -52,4 +55,5 @@ submit-$(1)-vivado: $$($(1)_LS_XPR)
 endef
 
 $(eval $(call submit_template,func,$(FUNC_COE) $(GOLDEN_TRACE)))
+# $(eval $(call submit_template,perf,$(PERF_COE)))
 $(eval $(call submit_template,final,$(UBOOT_COE)))
