@@ -1,0 +1,233 @@
+
+IFU -> IDU instr # comment
+	PC 32  # propagate PC to BRU to calculate branch target
+	instr 32
+	is_delayslot 1
+	branch_id 6
+	ETW 32 # exception type word
+
+IFU -> IFPCU request # instr fetch protocol converter 
+	PC 32
+	
+IFPCU -> IFU response 
+	instr 32
+
+IDU -> ISU decode
+	PC 32
+	rs 5
+	rt 5
+	sa 5		# shift amount
+	offset 26  # this covers the immediate as [15:0]
+	b_src 1
+	ext_type 1
+	rd 5
+	rd_sel 3
+	fu_type 3
+	fu_op 5
+	a_src 3
+	sel 3
+	is_delayslot 1
+	branch_id 6
+	ETW 32 # exception type word
+
+ISU -> ALU datain
+	A 32
+	B 32
+	fu_op 5
+	rd 5
+	sel 4
+	PC 32
+	is_delayslot 1
+	branch_id 6
+	ETW 32 # exception type word
+
+ISU -> MDU datain
+	A 32
+	B 32
+	fu_op 5
+	rd 5
+	PC 32
+	is_delayslot 1
+	branch_id 6
+	ETW 32 # exception type word
+
+ISU -> LSU datain
+	base 32
+	offset 32
+	wdata 32
+	fu_op 5
+	rd 5
+	PC 32
+	is_delayslot 1
+	branch_id 6
+	ETW 32 # exception type word
+
+ISU -> BRU datain
+	A 32          # A and B are used for conditional branch
+	B 32
+	PC 32
+	offset 26     # the offset of conditional branch can be extraced from [15:0]
+	fu_op 5
+	rd 5		  # rd is used for JALR
+	is_delayslot 1
+	branch_id 6
+	ETW 32 # exception type word
+
+ISU -> CP0 rw
+    wval 32
+    wrd 5
+    wsel 3
+    wen 1
+    rrd 5
+    rsel 3
+
+CP0 -> ISU rdata
+    val 32 
+
+ALU -> WBU res
+	val 32
+	rd 5
+	sel 4
+	rd_wen 1	# MOVN/MOVZ are conditional move instructions
+	PC 32
+	is_delayslot 1
+	branch_id 6
+	ETW 32 # exception type word
+
+MDU -> WBU res
+	val 32
+	rd 5
+	rd_wen 1
+	PC 32
+	is_delayslot 1
+	branch_id 6
+	ETW 32 # exception type word
+
+MDU -> WBU hilo
+	hi 32
+	hi_wen 1
+	lo 32
+	lo_wen 1
+
+MDU -> DIV divisor
+	ext_b 40
+
+MDU -> DIV dividend
+	ext_a 40
+
+DIV -> MDU res 
+	div_result 80
+
+LSU -> WBU res
+	val 32
+	rd 5
+	rd_byte_wen 4
+	PC 32
+	is_delayslot 1
+	branch_id 6
+	ETW 32 # exception type word
+	ls_addr 32 # load/store address
+
+LSU -> LSPCU rdata
+	rdata_addr 32
+
+LSU -> LSPCU wdata
+	wdata_addr 32
+	wdata_byte_en 4
+	wdata 32
+
+LSPCU -> LSU rdata
+	rdata 32
+
+LSPCU -> LSU wdata
+	useless 8	 # useless data
+
+BRU -> WBU res
+	val 32       # used by jal and jalr to write $ra
+	rd 5         # should always be $ra
+	rd_wen 1     # write $ra or not
+	target 32    # branch or jump taget
+	is_taken 1   # is the branch taken? always 1 for jump
+	PC 32
+	is_delayslot 1
+	branch_id 6
+	ETW 32 # exception type word
+
+ALU -> ISU forward
+    val 32
+    rd_byte_wen 4
+
+MDU -> ISU forward
+    val 32
+    rd_byte_wen 4
+
+LSU -> ISU forward
+    val 32
+    rd_byte_wen 4
+
+BRU -> ISU forward
+    val 32
+    rd_byte_wen 4
+
+WBU -> ISU wb
+	val 32
+	rd 5
+	sel 4
+	rd_byte_wen 4
+
+WBU -> ISU hilo
+	hi 32
+	hi_wen 1
+	lo 32
+	lo_wen 1
+
+WBU -> IFU flush
+	kind 2
+	branch_id 6
+
+WBU -> IDU flush
+	kind 2
+	branch_id 6
+
+WBU -> ISU flush
+	kind 2
+	branch_id 6
+
+WBU -> ALU flush
+	kind 2
+	branch_id 6
+
+WBU -> BRU flush
+	kind 2
+	branch_id 6
+
+WBU -> LSU flush
+	kind 2
+	branch_id 6
+
+WBU -> MDU flush
+	kind 2
+	branch_id 6
+
+WBU -> WBU flush
+	kind 2
+	branch_id 6
+
+WBU -> CP0 exception
+    etw 32
+    cur_inst_addr 32
+    badvaddr 32
+    isdelayslot 1
+    valid 1
+    exception_handle 1
+    int_enable 1
+
+CP0 -> WBU exception
+    has_exception 1
+    eret 1
+    epc 32
+
+WBU -> IFU branch
+	PC_branch 32
+    is_taken 1
+	has_exception 1

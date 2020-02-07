@@ -1,0 +1,27 @@
+START:
+
+gosub WAIT_PROMPT
+send "set serverip 192.168.1.104"
+
+gosub WAIT_PROMPT
+send "set ipaddr 192.168.1.107"
+
+gosub WAIT_PROMPT
+send "set gateway 192.168.1.104"
+
+gosub WAIT_PROMPT
+send "tftpboot 0x82000000 nanos-pal"
+
+gosub WAIT_PROMPT
+send "bootelf -p 0x82000000"
+
+exit
+
+WAIT_PROMPT:
+expect {
+  "nemu # " break
+  goto FAIL
+}
+return
+
+FAIL:

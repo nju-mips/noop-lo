@@ -1,0 +1,21 @@
+ifeq ($(NPC_HOME),) # AM_HOME must exist
+export NPC_HOME = $(abspath .)
+endif
+
+FPGA_HOME = $(NPC_HOME)/fpga
+SOC ?= npc-zedboard
+
+SOC_SPLIT = $(subst -, ,$(SOC))
+CORE      = $(word 1,$(SOC_SPLIT))
+UNCORE    = $(word 2,$(SOC_SPLIT))
+
+CORES   = $(shell ls core/)
+UNCORES = $(shell ls uncore/)
+
+ifeq ($(filter $(CORES), $(CORE)), ) # CORE must be valid
+$(error Invalid CORE. Supported: $(CORES))
+endif
+
+ifeq ($(filter $(UNCORES), $(UNCORE)), ) # UNCORE must be valid
+$(error Invalid UNCORE. Supported: $(UNCORES))
+endif

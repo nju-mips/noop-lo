@@ -1,0 +1,60 @@
+# single cycle rv32 cpu with stall
+# branch_id 6 # what is branch_id for ?
+
+IFU -> IDU instr # comment
+	PC 32  # propagate PC to BRU and ALU to calculate branch target and AUIPC
+	instr 32
+
+IDU -> ISU decode
+	PC 32
+    instr 32
+	rs1 5
+	rs2 5
+	rd 5
+    op1_sel # op1 selector
+    op2_sel # op2 selector
+	fu_type 3 # functional unit type
+	fu_op 5 # function unit operation type
+
+ISU -> ALU datain
+	a 32
+	b 32
+	rd 5
+	fu_op 5
+
+ISU -> LSU datain
+	base 32
+	offset 32
+	wdata 32 # the data to store
+	rd 5
+	fu_op 5
+
+ISU -> BRU datain
+	A 32          # A and B are used for conditional branch
+	B 32
+	PC 32
+	offset 26     # the offset against current PC?????
+	rd 5		  # rd is used for JALR
+	fu_op 5
+
+ISU -> CSR datain
+
+ALU -> WBU res
+	val 32
+	rd 5
+
+LSU -> WBU res
+	val 32
+	rd 5
+	wen 1
+
+BRU -> WBU res
+	val 32       # used by jal and jalr
+	rd 5
+	rd_wen 1     # only jal and jalr needs to write registers
+	target 32    # branch or jump taget
+	is_taken 1   # is the branch taken? always 1 for jump
+
+WBU -> IFU branch
+	PC_branch 32
+    is_taken 1

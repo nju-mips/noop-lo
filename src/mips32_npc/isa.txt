@@ -1,0 +1,73 @@
+# RV32I Base Integer Instruction Set, Version 2.0
+
+## Integer Computational Instructions
+No integer computational instructions cause arithmetic exceptions.
+
+### Integer Register-Immediate Instructions
+ADDI
+ANDI
+ORI
+XORI
+SLTI
+SLTIU
+SLLI
+SRAI
+SRLI
+LUI
+AUIPC
+
+### Integer Register-Register Operations
+SLL
+ADD
+SUB
+SLT
+SLTU
+AND
+OR
+XOR
+SRA
+SRL
+
+## Control Transfer Instructions
+
+### Unconditional Jumps
+The JAL and JALR instructions will generate a misaligned instruction fetch exception if the target address is not aligned to a four-byte boundary.
+JAL
+JALR
+
+### Conditional Branches
+BEQ
+BNE
+BGE
+BGEU
+BLT
+BLTU
+
+## Load and Store Instructions
+Loads with a destination of x0 must still raise any exceptions and action any other side effects even though the load value is discarded.
+LW
+LB
+LBU
+LH
+LHU
+SW
+SB
+SH
+
+## Memory Fence
+FENCE_I
+FENCE
+
+## Control and Status Register Instructions
+### CSR Instructions
+CSRRWI
+CSRRSI
+CSRRCI
+CSRRW
+CSRRS
+CSRRC
+ECALL
+MRET
+DRET
+EBREAK
+WFI
