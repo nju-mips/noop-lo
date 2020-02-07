@@ -34,7 +34,7 @@ class Emulator {
   void prepare_bin_txt(const device_t *dev, const char *file) {
 	assert(dev->map && "not a valid device");
 	size_t ulen = sizeof(UInt);
-	ssize_t dev_len = (dev->end - dev->start) / ulen;
+	ssize_t dev_len = dev->size / ulen;
 	ssize_t vlen = dev_len - 1; /* length of valid data */
 	const UInt *data_ptr = (const UInt*)dev->map(0, 0);
 
@@ -90,6 +90,14 @@ class Emulator {
   static const struct option long_options[];
   static void print_help(const char *file);
 
+  static device_t *find_device(const char *name) {
+    for (device_t *head = get_device_list_head(); head; head = head->next) {
+      if (strcmp(head->name, name) == 0)
+        return head;
+    }
+    return nullptr;
+  }
+
 public:
   // argv decay to the secondary pointer
   Emulator(int argc, const char *argv[]):
@@ -115,8 +123,10 @@ public:
 
 	/* ddr.bin.txt and bram.bin.txt */
 	if(need_generate_bin_txt) {
-	  prepare_bin_txt<uint32_t>(&bram_dev, BRAM_BIN_TXT);
-	  prepare_bin_txt<uint64_t>(&ddr_dev, DDR_BIN_TXT);
+      device_t *bram_dev = find_device("block-ram");
+      device_t *ddr_dev = find_device("ddr");
+	  prepare_bin_txt<uint32_t>(bram_dev, BRAM_BIN_TXT);
+	  prepare_bin_txt<uint64_t>(ddr_dev, DDR_BIN_TXT);
 	}
 
 	/* init core */

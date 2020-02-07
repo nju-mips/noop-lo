@@ -24,6 +24,7 @@ extern void init_mmio(void);
 extern uint32_t paddr_peek(paddr_t addr, int len);
 extern uint32_t get_current_pc();
 extern uint32_t get_current_instr();
+extern device_t *get_device_list_head();
 /* APIs exported by nemu-mips32 */
 
 /* ddr_dev, bram_dev */
