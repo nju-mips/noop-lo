@@ -21,6 +21,7 @@ extern work_mode_t parse_args(int argc, const char *argv[]);
 extern work_mode_t init_monitor(void);
 extern void init_sdl(void);
 extern void init_mmio(void);
+extern void init_events(void);
 extern uint32_t paddr_peek(paddr_t addr, int len);
 extern uint32_t get_current_pc();
 extern uint32_t get_current_instr();
@@ -43,6 +44,7 @@ public:
 	init_sdl();
 	init_mmio();
 	init_monitor();
+    init_events();
   }
 
   void exec_one_instr() { cpu_exec(1); }

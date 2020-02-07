@@ -262,7 +262,7 @@ class CP0Cause extends Bundle {
 
   def write(value: UInt): Unit = {
     val newVal = value.asTypeOf(this)
-    this.IV := newVal.IV
+    // this.IV := newVal.IV
     this.WP := newVal.WP
     this.IP(1) := newVal.IP(1)
     this.IP(0) := newVal.IP(0)
