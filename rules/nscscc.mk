@@ -32,11 +32,11 @@ $(1)_LS_TOP_V=$$(LS_SUBMIT_DIR)/soc_axi_$(1)/rtl/myCPU/LoongsonTop.v
 $(1)_LS_XPR=$$(LS_SUBMIT_DIR)/soc_axi_$(1)/run_vivado/mycpu_prj1/mycpu.xpr
 
 $$($(1)_LS_TOP_V): $$(LOONGSON_NPC_RTL)
-	@mkdir -p $$(@D)
-	@cp $$< $$@
+	mkdir -p $$(@D)
+	cp $$< $$@
 
-$$($(1)_LS_XPR): $$($(1)_LS_TOP_V) $(2)
-	@cp -r nscscc/soc_axi_$(1) $$(LS_SUBMIT_DIR)
+submit-$(1) $$($(1)_LS_XPR): $$($(1)_LS_TOP_V) $(2)
+	cp -r nscscc/soc_axi_$(1) $$(LS_SUBMIT_DIR)
 
 clean-submit-$(1):
 	cd $$(LS_SUBMIT_DIR) && rm -rf soc_axi_$(1)
@@ -44,10 +44,8 @@ clean-submit-$(1):
 submit-sync-$(1): $$($(1)_LS_TOP_V)
 
 submit-$(1)-bit: $$($(1)_LS_XPR)
-	@cp nscscc/mk.tcl $$(LS_SUBMIT_DIR)/soc_axi_$(1)/run_vivado/mycpu_prj1
-	@cd $$(LS_SUBMIT_DIR)/soc_axi_$(1)/run_vivado/mycpu_prj1 && $(VIVADO_18) $(VIVADO_FLAG) -mode batch -source mk.tcl
-
-submit-$(1): $$($(1)_LS_XPR)
+	SOC_XPR=mycpu.xpr SOC_DIR=$$(LS_SUBMIT_DIR)/soc_axi_$(1)/run_vivado/mycpu_prj1 \
+	  $(VIVADO_18) $(VIVADO_FLAG) -mode batch -source nscscc/mk.tcl
 
 submit-$(1)-vivado: $$($(1)_LS_XPR)
 	cd $$(<D) && nohup $$(VIVADO_18) $$< &>/dev/null &
