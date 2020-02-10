@@ -4,7 +4,7 @@
 define test_template
 $(2)_APP := $(1)/build/$(2)
 $(2)_OBJDIR := $(OBJ_DIR)/$(2)
-$(2)_DEPS := $(shell find $(1) -regex ".*.\(c\|h\|cc\|cpp\|S\)")
+$(2)_DEPS != find $(1) -regex ".*.\(c\|h\|cc\|cpp\|S\)"
 
 .PHONY: compile-$(2) run-$(2) run-nemu-$(2) clean-$(2)
 

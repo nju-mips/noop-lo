@@ -1,14 +1,14 @@
 SCALA_DIR := src
-SCALA_FILES := $(shell find $(SCALA_DIR) -name "*.scala")
+SCALA_FILES != find $(SCALA_DIR) -name "*.scala"
 
-EMU_OBJ_DIR := $(OBJ_DIR)
-EMU_SRC_DIR := emu
+EMU_OBJ_DIR := $(OBJ_DIR)/emu
+EMU_SRC_DIR := $(abspath ./emu)
 EMU_TOP_MODULE := SimTop
 EMU_TOP_V := $(EMU_OBJ_DIR)/emu_top.v
-EMU_LIB_V := $(shell find $(EMU_SRC_DIR) -name "*.v")
 EMU_MK := $(EMU_OBJ_DIR)/emu.mk
 EMU_BIN := $(EMU_OBJ_DIR)/emulator
-EMU_CXXFILES := $(shell find $(EMU_SRC_DIR) -name "*.cpp")
+EMU_LIB_V != find $(EMU_SRC_DIR) -name "*.v"
+EMU_CXXFILES != find $(EMU_SRC_DIR) -name "*.cpp"
 
 DDR_BIN_TXT := ddr.bin.txt
 BRAM_BIN_TXT := bram.bin.txt
@@ -26,6 +26,7 @@ $(EMU_TOP_V): $(SCALA_FILES)
 	@sed -i '/ bram /ainitial begin $$readmemh("$(BRAM_BIN_TXT)", bram); end' $@
 
 $(EMU_MK): $(EMU_TOP_V) $(EMU_CXXFILES) $(EMU_LIB_V)
+	@mkdir -p $(@D)
 	@verilator --cc --exe --top-module $(EMU_TOP_MODULE) \
 	  -o $(notdir $(EMU_BIN)) -Mdir $(@D) \
 		-CFLAGS "-I $(MIPS32_NEMU_HOME)/include" \
